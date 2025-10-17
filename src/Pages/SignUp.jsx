@@ -1,7 +1,31 @@
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import React from 'react';
 import { Link } from 'react-router';
+import { auth } from '../Firebase/Firebase.init';
+import { toast } from 'react-toastify';
 
 const SignUp = () => {
+  const handelSignUp=(e)=>{
+    e.preventDefault()
+    const email=e.target.email.value
+    const password=e.target.password.value
+    console.log("The value is ",{email,password})
+
+    const regExp=/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    if(!regExp.test(password)){
+      toast.error("Password must contain at least one uppercase,lowercase letter number & special character at least one each")
+      return;
+    }
+
+   createUserWithEmailAndPassword(auth,email,password)
+   .then((res)=>{
+     console.log(res.user)
+     toast.success("SignUp Successfully Done")
+   }).catch((error)=>{
+      toast.error(error.message)
+   })
+
+  }
     return (
         <div className="min-h-[96vh] flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 relative overflow-hidden">
       {/* Animated floating circles */}
@@ -27,7 +51,7 @@ const SignUp = () => {
               Sign Up
             </h2>
 
-            <form className="space-y-4">
+            <form onSubmit={handelSignUp} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Email</label>
                 <input
@@ -43,7 +67,7 @@ const SignUp = () => {
                   Password
                 </label>
                 <input
-                  type="text"
+                  type="password"
                   name="password"
                   placeholder="••••••••"
                   className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
