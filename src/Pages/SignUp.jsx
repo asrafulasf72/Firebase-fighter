@@ -1,10 +1,13 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { auth } from '../Firebase/Firebase.init';
 import { toast } from 'react-toastify';
+import { Eye, EyeOff } from 'lucide-react';
 
 const SignUp = () => {
+
+  const [showPass, setShowPass]=useState(false)
   const handelSignUp=(e)=>{
     e.preventDefault()
     const email=e.target.email.value
@@ -67,11 +70,14 @@ const SignUp = () => {
                   Password
                 </label>
                 <input
-                  type="password"
+                  type={showPass? "text":"password"}
                   name="password"
                   placeholder="••••••••"
                   className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-pink-400"
                 />
+                <span onClick={()=> setShowPass(!showPass)} className='absolute cursor-pointer z-50 right-4 top-8'>
+                  {showPass? <Eye/>:<EyeOff/>}
+                </span>
               </div>
 
               <button type="submit" className="my-btn">
