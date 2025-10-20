@@ -1,7 +1,42 @@
-import React from 'react';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { Eye, EyeOff } from 'lucide-react';
+import React, { useState } from 'react';
 import { Link } from 'react-router';
+import { auth } from '../Firebase/Firebase.init';
+import { toast } from 'react-toastify';
 
 const SignIn = () => {
+  const [showPass,setShowPass]=useState(false)
+  const [user,setUser]=useState(null)
+
+   const handelSignIn=(e)=>{
+       e.preventDefault();
+       const email=e.target.email.value
+         const password=e.target.password.value
+
+       signInWithEmailAndPassword(auth,email,password)
+       .then((res)=>{
+          console.log(res)
+          setUser(res.user)
+          toast.success("Sign In Successully")
+       })
+       .catch((error)=>{
+            console.log(error)
+            toast.error(error.message)
+       })
+   }
+    
+
+   const handelSignOut=()=>{
+       signOut(auth)
+       .then(()=>{
+         toast.success("Signout Succesfull")
+         setUser(null)
+       }).catch((error)=>[
+        toast.error(error.message)
+       ])
+   }
+
     return (
        <div className="min-h-[calc(100vh-20px)] flex items-center justify-center bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 relative overflow-hidden">
       {/* Animated glow orbs */}
@@ -24,22 +59,23 @@ const SignIn = () => {
           </div>
 
           {/* Login card */}
-                      <div className="w-full max-w-md backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8">
+        <div className="w-full max-w-md backdrop-blur-lg bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8">
            
-              <div className="text-center space-y-3">
+               {user?           
+                <div className="text-center space-y-3">
                 <img
                   src=''
                   className="h-20 w-20 rounded-full mx-auto"
                   alt=""
                 />
                 <h2 className="text-xl font-semibold"></h2>
-                <p className="text-white/80"></p>
-                <button className="my-btn">
+                <p className="text-white/80">{user?.email}</p>
+                <button onClick={handelSignOut} className="my-btn">
                   Sign Out
                 </button>
               </div>
-          
-              <form  className="space-y-5">
+               :
+              <form onSubmit={handelSignIn}  className="space-y-5">
                 <h2 className="text-2xl font-semibold mb-2 text-center text-white">
                   Sign In
                 </h2>
@@ -57,11 +93,14 @@ const SignIn = () => {
                 <div className="relative">
                   <label className="block text-sm mb-1">Password</label>
                   <input
-                    type="text"
+                    type={showPass? "text":"password"}
                     name="password"
                     placeholder="••••••••"
                     className="input input-bordered w-full bg-white/20 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   />
+                  <span onClick={()=>setShowPass(!showPass)} className='absolute cursor-pointer z-50 right-4 top-8'>
+                       {showPass?<Eye></Eye>:<EyeOff></EyeOff>}
+                  </span>
                 </div>
 
                 <button type="submit" className="my-btn">
@@ -98,6 +137,9 @@ const SignIn = () => {
                   </Link>
                 </p>
               </form>
+               }
+          
+        
           </div>
         </div>
       </div>

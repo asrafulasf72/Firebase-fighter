@@ -14,7 +14,8 @@ const SignUp = () => {
     const password=e.target.password.value
     console.log("The value is ",{email,password})
 
-    const regExp=/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+    const regExp=/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()\-_=+])[A-Za-z\d@$!%*?&#^()\-_=+]{8,}$/;
+
     if(!regExp.test(password)){
       toast.error("Password must contain at least one uppercase,lowercase letter number & special character at least one each")
       return;
