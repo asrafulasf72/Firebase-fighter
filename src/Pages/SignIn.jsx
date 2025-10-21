@@ -1,9 +1,12 @@
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import { Eye, EyeOff } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { auth } from '../Firebase/Firebase.init';
 import { toast } from 'react-toastify';
+
+import { GoogleAuthProvider } from "firebase/auth";
+const Googleprovider = new GoogleAuthProvider();
 
 const SignIn = () => {
   const [showPass,setShowPass]=useState(false)
@@ -16,7 +19,7 @@ const SignIn = () => {
 
        signInWithEmailAndPassword(auth,email,password)
        .then((res)=>{
-          console.log(res)
+          console.log(res.user)
           setUser(res.user)
           toast.success("Sign In Successully")
        })
@@ -24,6 +27,20 @@ const SignIn = () => {
             console.log(error)
             toast.error(error.message)
        })
+   }
+
+   const handelSignInWithGoogle=()=>{
+         signInWithPopup(auth,Googleprovider)
+             .then((res)=>{
+          console.log(res.user)
+          setUser(res.user)
+          toast.success("Sign In Successully")
+       })
+       .catch((error)=>{
+            console.log(error)
+            toast.error(error.message)
+       })
+
    }
     
 
@@ -64,11 +81,11 @@ const SignIn = () => {
                {user?           
                 <div className="text-center space-y-3">
                 <img
-                  src=''
+                  src={user?.photoURL}
                   className="h-20 w-20 rounded-full mx-auto"
                   alt=""
                 />
-                <h2 className="text-xl font-semibold"></h2>
+                <h2 className="text-xl font-semibold">{user?.displayName}</h2>
                 <p className="text-white/80">{user?.email}</p>
                 <button onClick={handelSignOut} className="my-btn">
                   Sign Out
@@ -115,7 +132,7 @@ const SignIn = () => {
                 </div>
 
                 {/* Google Signin */}
-                <button
+                <button onClick={handelSignInWithGoogle}
                   type="button"
                   className="flex items-center justify-center gap-3 bg-white text-gray-800 px-5 py-2 rounded-lg w-full font-semibold hover:bg-gray-100 transition-colors cursor-pointer"
                 >
